@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam
@@ -37,6 +37,10 @@ model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accur
 # Treinar o modelo
 history = model.fit(x_train, y_train_ohe, epochs=10, batch_size=32, validation_data=(x_test, y_test_ohe))
 
+# Está começando a gerar overfitting com 30 epochs pois enquanto a perda de treino caiu, a de validação aumentou.
+# Fora que os ganhos de performance de accuracy foram só de 0.2%
+#history = model.fit(x_train, y_train_ohe, epochs=30, batch_size=32, validation_data=(x_test, y_test_ohe))
+
 # Avaliação do modelo
 y_pred = model.predict(x_test)
 y_pred_classes = np.argmax(y_pred, axis=1)
@@ -55,3 +59,8 @@ plt.show()
 # Exibir acurácia final
 final_accuracy = accuracy_score(y_test, y_pred_classes)
 print(f'Acurácia Final: {final_accuracy * 100:.2f}%')
+
+# Cálculo do Precision, Recall e F1-score
+report = classification_report(y_test, y_pred_classes, digits=4)
+print("Relatório de Classificação (Precision, Recall, F1-score):\n")
+print(report)
